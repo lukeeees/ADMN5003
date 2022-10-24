@@ -41,7 +41,6 @@ median_tempo <- median(df$tempo, na.rm = TRUE)
 
 df_clean <- df %>% replace_na(list(danceability = median_danceability,tempo = median_tempo))
 
-View(df_clean)
 
 
 #b)	Compute the mean, median, min, max and standard deviation for each of the continuous variables, using sapply(). 
@@ -86,9 +85,24 @@ dim(valid.data)
 #b)	Fit a linear regression model to the two continuous variables in the training data.
 
 reg <- lm(danceability ~ tempo, data = train.data) 
+pred <- predict(reg, newdata = valid.data)
+
+
 
 
 #c)	Use the “forecast” package to compare the accuracy of the model on training and validation data. Is there any overfitting of the model? Why?
+
+#checking accuracy on training set
+acc_train <- accuracy(reg$fitted.values, train.data$danceability)
+
+#checking accuracy on validation set
+acc_valid <- accuracy(pred, valid.data$danceability)
+
+acc_train
+
+acc_valid
+
+#There is no overfitting since the RMSE for the validation data (0.064) is lower than the train data (0.69)
 
 
 
@@ -97,6 +111,8 @@ reg <- lm(danceability ~ tempo, data = train.data)
 # QUESTION 4 - Cereals Data
 #==========================================
 
+#Load Dataset
+dfCereals <- read.csv("Cereals.csv")
 
 
 #a)	Perform a Principal Component Analysis on “any 7 variables” using normalized data. Remove missing values. (1 mark)
