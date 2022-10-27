@@ -44,10 +44,15 @@ df_clean <- df %>% replace_na(list(danceability = median_danceability,tempo = me
 
 
 #b)	Compute the mean, median, min, max and standard deviation for each of the continuous variables, using sapply(). 
-
-
-
-
+options(warn=-1)
+df_cont = df_clean[,2:3] #select the continuous variable in the dataframe
+sapply(df_cont, function(df_cont) c( "Mean"= mean(df_cont,na.rm=TRUE),
+                                       "Median" = median(df_cont),
+                                       "Min" = min(df_cont),
+                                       "Max" = max(df_cont),
+                                       "Stand dev" = sd(df_cont)
+                                       )
+       )
 
 
 #c)	Plot a side-by-side box plot of dependent variable (column 2) as a function of categorical independent variable (column 4). Include main title and the label of two axes. 
@@ -110,12 +115,27 @@ acc_valid
 #==========================================
 # QUESTION 4 - Cereals Data
 #==========================================
+#Load convenience functions for PCA
+source("pca.r")
 
 #Load Dataset
 dfCereals <- read.csv("Cereals.csv")
 
-
 #a)	Perform a Principal Component Analysis on “any 7 variables” using normalized data. Remove missing values. (1 mark)
 
+#Check NA
+names(which(colSums(is.na(dfCereals)) > 0))
+
+# replace NA with median by selecting columns
+clean_cereal <- dfCereals %>%
+  mutate_at(c('carbo','sugars','potass'), ~replace_na(.,median(.,na.rm=TRUE)))
+print(clean_cereal)
+
+
+#no more missing values
+names(which(colSums(is.na(clean_cereal)) > 0)) 
+
+pca_cereal <- prcomp(clean_cereal[,4:15], scale = T, center = T)
+plot(pca_cereal,type='barplot')
 
 #b)	How many components in your future modelling are sufficient, and why?     (1 mark)
