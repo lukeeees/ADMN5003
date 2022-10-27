@@ -139,3 +139,6 @@ pca_cereal <- prcomp(clean_cereal[,4:15], scale = T, center = T)
 plot(pca_cereal,type='barplot')
 
 #b)	How many components in your future modelling are sufficient, and why?     (1 mark)
+#5 will be enough
+
+
