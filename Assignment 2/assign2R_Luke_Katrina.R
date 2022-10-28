@@ -50,7 +50,7 @@ sapply(df_cont, function(df_cont) c( "Mean"= mean(df_cont,na.rm=TRUE),
                                        "Median" = median(df_cont),
                                        "Min" = min(df_cont),
                                        "Max" = max(df_cont),
-                                       "Stand dev" = sd(df_cont)
+                                       "Std dev" = sd(df_cont)
                                        )
        )
 
@@ -142,6 +142,7 @@ plot(pca_cereal,type='barplot')
 
 
 #b)	How many components in your future modelling are sufficient, and why?     (1 mark)
-#5 will be enough, because the covariance is near zero as it moves down.
+
+#5 will be enough, because the covariance is near zero as it moves down. The first 5 components explains about 81% of the variance.
 
 
