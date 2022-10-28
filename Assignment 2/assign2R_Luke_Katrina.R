@@ -116,7 +116,6 @@ acc_valid
 # QUESTION 4 - Cereals Data
 #==========================================
 #Load convenience functions for PCA
-source("pca.r")
 
 #Load Dataset
 dfCereals <- read.csv("Cereals.csv")
@@ -136,9 +135,13 @@ print(clean_cereal)
 names(which(colSums(is.na(clean_cereal)) > 0)) 
 
 pca_cereal <- prcomp(clean_cereal[,4:15], scale = T, center = T)
+summary(pca_cereal)
+barplot(pca_cereal$rotation[,1],main="PC Loading Plot",las =2)
+
 plot(pca_cereal,type='barplot')
 
+
 #b)	How many components in your future modelling are sufficient, and why?     (1 mark)
-#5 will be enough
+#5 will be enough, because the covariance is near zero as it moves down.
 
 
