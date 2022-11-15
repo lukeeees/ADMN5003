@@ -157,23 +157,23 @@ dfRidingMowers$Ownership <- ifelse(dfRidingMowers$Ownership =="Owner",1,0)
 
 
 #b)	The logit as a function of the predictors (0.5 mark)
+#c)	The odds as a function of the predictors (0.5 mark)
+#d)	The probability as a function of the predictors (0.5 mark)
+
 
 # This is just the same with model
 logit.reg <-glm(Ownership~.,data=dfRidingMowers,family = 'binomial')
 data.frame(summary(logit.reg)$coefficients,odds = exp(coef(logit.reg)))
 
-pred <- predict(logit.reg,dfRidingMowers)
-gain <-gains(dfRidingMowers$Ownership,logit.reg$fitted.values)
+round(data.frame(summary(logit.reg)$coefficients,odds = exp(coef(logit.reg))), 5)
+
+pred <- predict(logit.reg,dfRidingMowers, type = "response")
+gain <- gains(dfRidingMowers$Ownership,logit.reg$fitted.values)
 
 confusionMatrix(ifelse(pred > 0.5, 1,0),dfRidingMowers$Ownership)
 
-#c)	The odds as a function of the predictors (0.5 mark)
 
-# ?????
 
-#d)	The probability as a function of the predictors (0.5 mark)
-
-# ?????
 
 
 
