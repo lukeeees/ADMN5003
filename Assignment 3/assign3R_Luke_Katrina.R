@@ -2,8 +2,9 @@
 # ADMN5003 - ASSIGNMENT 3
 #==========================================
 #------------------------------------------
-
-
+# install.packages('caret')
+# install.packages('InformationValue')
+# install.packages('gains')
 #==========================================
 # LOAD STANDARD PACKAGES
 #==========================================
@@ -17,6 +18,7 @@ library(testthat) #need to load this first to avoid problems with psych::describ
 library(psych)
 library(caret)
 library(InformationValue)
+library(gains)
 
 
 
@@ -108,7 +110,7 @@ library(InformationValue)
 
 #g)	True or false: lift charts and decile lift charts can evaluate the performance of both prediction analyses (numeric output variable) and classification analyses (categorical output variable). (0.5 mark) Why? (0.5 mark)
 
-# ?????
+# True; Lift chart and decile lift charts is widely used in predictive modeling and evaluating classification models.
 
 
 
@@ -156,8 +158,14 @@ dfRidingMowers$Ownership <- ifelse(dfRidingMowers$Ownership =="Owner",1,0)
 
 #b)	The logit as a function of the predictors (0.5 mark)
 
-# ?????
+# This is just the same with model
+logit.reg <-glm(Ownership~.,data=dfRidingMowers,family = 'binomial')
+data.frame(summary(logit.reg)$coefficients,odds = exp(coef(logit.reg)))
 
+pred <- predict(logit.reg,dfRidingMowers)
+gain <-gains(dfRidingMowers$Ownership,logit.reg$fitted.values)
+
+confusionMatrix(ifelse(pred > 0.5, 1,0),dfRidingMowers$Ownership)
 
 #c)	The odds as a function of the predictors (0.5 mark)
 
