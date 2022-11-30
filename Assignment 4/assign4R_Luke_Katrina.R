@@ -107,19 +107,46 @@ summary(model2)
 # QUESTION 2
 # Use “BostonHousing.csv” to predict the median house price in new tracts based on information such as crime rate, pollution, number of rooms and distance to employment centers. The dataset contains 13 predictors, and the response is the median house price (MEDV). 
 #==========================================
+set.seed(0)
+
+trainIndex_Boston <- sample(row.names(dfBoston), 0.6*dim(dfBoston)[1])  
+validIndex_Boston <- setdiff(row.names(dfBoston), dfBoston)  
+train_dfBoston <- dfBoston[trainIndex_Boston, ]
+valid_dfBoston <- dfBoston[validIndex_Boston, ]
+
+train_dfBoston
+valid_dfBoston
+
+# initialize normalized training, validation data, complete data frames to originals
+train.norm.df <- train_dfBoston
+valid.norm.df <- valid_dfBoston
+boston.norm.df <- dfBoston
 
 # a) Perform a k-NN prediction with all 12 predictors (the output variable is MEDV, ignore the CAT.MEDV column), trying values of k from 1 to 5. Partition your data. (1 mark) 
 
+#Normalize the data. (0.5 marks)
 
-#Normalize the data. (0.5 marks) 
+#use preProcess() from the caret package
+norm.values <- preProcess(train_dfBoston[, 1:12], method=c("center", "scale"))
+norm.values
+norm.values$dim
 
+train.norm.df[, 1:12] <- predict(norm.values, train_dfBoston[, 1:12]) #predict (model, value)
+valid.norm.df[, 1:12] <- predict(norm.values, valid_dfBoston[, 1:12])
+boston.norm.df[, 1:12] <- predict(norm.values, dfBoston[, 1:12])
 
 #Choose function knn() from package class rather than package FNN. (0.5 mark) To make sure R is using the class package when both packages are loaded, use class::knn().
-
+nn <-FNN::knn(train= train.norm.df[,1:12], test = valid.norm.df[,1:12] , cl = train.norm.df[,13],k=3)
 
 # b) What is the best k? (0.5 mark)
+accuracy_dfBoston <-data.frame(k = seq(1,13,1),accuracy = rep(0,13))
 
-
+# compute knn for different k on validation.
+for(i in 1:14) {
+  knn.pred <- knn(train.norm.df[, 1:12], valid.norm.df[, 1:12],
+                  cl = train.norm.df[, 13], k = i)
+  accuracy_dfBoston[i, 2] <- confusionMatrix(knn.pred, valid.norm.df["MEDV"])$overall[1]
+}
 
 # c) What does the best k mean (i.e. how many nearest neighbors shall be used to determine the predicted value of MEDV, and how is the value determined)? (0.5 mark) 
 
