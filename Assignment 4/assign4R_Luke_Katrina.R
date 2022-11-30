@@ -136,19 +136,35 @@ valid.norm.df[, 1:12] <- predict(norm.values, valid_dfBoston[, 1:12])
 boston.norm.df[, 1:12] <- predict(norm.values, dfBoston[, 1:12])
 
 #Choose function knn() from package class rather than package FNN. (0.5 mark) To make sure R is using the class package when both packages are loaded, use class::knn().
-nn <-FNN::knn(train= train.norm.df[,1:12], test = valid.norm.df[,1:12] , cl = train.norm.df[,13],k=3)
+
+nn <- class::knn(train= train.norm.df[,1:12], test = valid.norm.df[,1:12] , cl = train.norm.df[,13],k=1)
+
+#or
+
+grid = expand.grid(k = c(1,2,3,4,5))
+model_nn <-train(MEDV~., data = train.norm.df[,1:13], method="knn", trControl = trainControl("cv", search = "grid"),tuneGrid = grid)
+model_nn$results
 
 # b) What is the best k? (0.5 mark)
-accuracy_dfBoston <-data.frame(k = seq(1,13,1),accuracy = rep(0,13))
 
+accuracy_dfBoston <-data.frame(k = seq(1,4,1),RMSE = rep(0,4))
+accuracy_dfBoston
 # compute knn for different k on validation.
-for(i in 1:14) {
-  knn.pred <- knn(train.norm.df[, 1:12], valid.norm.df[, 1:12],
-                  cl = train.norm.df[, 13], k = i)
-  accuracy_dfBoston[i, 2] <- confusionMatrix(knn.pred, valid.norm.df["MEDV"])$overall[1]
+
+for(i in 1:4) {
+  knn.pred <- class::knn(train = train.norm.df[, 1:12], test = valid.norm.df[, 1:12],
+                 cl = train.norm.df[, 13], k = i)
+  accuracy_dfBoston[i, 2] <-RMSE(numeric(knn.pred),numeric(valid.norm.df$MEDV))
 }
 
+accuracy_dfBoston
+#K=4, because when K = 4 it has the least RMSE across the 5 K's
+
+
 # c) What does the best k mean (i.e. how many nearest neighbors shall be used to determine the predicted value of MEDV, and how is the value determined)? (0.5 mark) 
+nn <- class::knn(train= train.norm.df[,1:12], test = valid.norm.df[,1:12] , cl = train.norm.df[,13],k=7)
+
+# The best K means how many nearest neighbor shall be used. In this case because its a numerical outcome the lowest error is used to give the best value of K.
 
 
 
@@ -157,15 +173,23 @@ for(i in 1:14) {
 # QUESTION 3
 # Neural Nets (Total 3.5 marks)
 #==========================================
-
+install.packages("neuralnet")
+library(neuralnet)
 
 # 1)	A neural net typically starts out with random coefficients; hence, it produces essentially random predictions when presented with its first case. What is the key ingredient by which the net evolves to produce a more accurate prediction? (0.5 mark)
 
+#A key feature of neural networks is an iterative learning process in which records (rows) are presented to the network one at a time, and the weights associated.
 
-# 2) Use data “ToyotaCorolla.csv” to predict the price of a used Toyota Corolla based on its specifications. Use the three predictors Age_08_04, KM, and Fuel_Type to build a neural network model. (1 mark) 
+# 2) Use data “ToyotaCorolla.csv” to predict the price of a used Toyota Corolla based on its specifications.
+#Use the three predictors Age_08_04, KM, and Fuel_Type to build a neural network model. (1 mark) 
+
+dfToyotaCorolla <- read.csv("ToyotaCorolla.csv")
+View(dfToyotaCorolla)
 
 
 #Convert the categorical variable to dummies. (0.5 mark) 
+unique(dfToyotaCorolla$Fuel_Type)
+dfToyotaCorolla$Fuel_Type = factor(dfToyotaCorolla$Fuel_Type,levels = c('Diesel', 'Petrol', 'CNG'),labels = c(0, 1, 2))
 
 
 #Scale the numerical predictor and outcome variables to a 0-1 scale. (0.5 mark) 
@@ -173,5 +197,6 @@ for(i in 1:14) {
 
 #Fit a neural network model to the data. Use a single hidden layer with 2 nodes. (0.5 mark) 
 
+n <- neuralnet(Price~ Age_08_04 + KM + Fuel_Type, data = dfToyotaCorolla, linear.output = F, hidden = 2)
 
 #Plot the neural network. (0.5 mark)
