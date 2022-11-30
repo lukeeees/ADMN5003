@@ -177,7 +177,7 @@ library(neuralnet)
 
 # 1)	A neural net typically starts out with random coefficients; hence, it produces essentially random predictions when presented with its first case. What is the key ingredient by which the net evolves to produce a more accurate prediction? (0.5 mark)
 
-#A key feature of neural networks is an iterative learning process in which records (rows) are presented to the network one at a time, and the weights associated.
+#The iterative learning process in which rows are presented to the network one at a time, and the weights associated.
 
 # 2) Use data “ToyotaCorolla.csv” to predict the price of a used Toyota Corolla based on its specifications.
 #Use the three predictors Age_08_04, KM, and Fuel_Type to build a neural network model. (1 mark) 
@@ -206,6 +206,6 @@ finaldf
 #Fit a neural network model to the data. Use a single hidden layer with 2 nodes. (0.5 mark) 
 
 n <- neuralnet::neuralnet(Price ~ ., data = finaldf, linear.output = F, hidden = 2)
-
+n$result.matrix
 #Plot the neural network. (0.5 mark)
 plot(n)
