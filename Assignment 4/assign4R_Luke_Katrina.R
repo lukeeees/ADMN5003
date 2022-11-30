@@ -6,6 +6,7 @@
 # install.packages('InformationValue')
 # install.packages('gains')
 # install.packages("FNN")
+
 #==========================================
 # LOAD STANDARD PACKAGES
 #==========================================
@@ -21,6 +22,7 @@ library(caret)
 library(InformationValue)
 library(gains)
 library(FNN)
+library(reshape2)
 
 
 #==========================================
@@ -30,7 +32,7 @@ library(FNN)
 
 #Load the dataset
 dfBoston <- read.csv("BostonHousing.csv")
-
+View(dfBoston)
 
 
 # a)	Partition the data. Use training data to build the following 2 models. (0.5 mark)
@@ -39,33 +41,66 @@ set.seed(0)
 
 trainIndex_Boston <- sample(row.names(dfBoston), 0.6*dim(dfBoston)[1])  
 validIndex_Boston <- setdiff(row.names(dfBoston), dfBoston)  
-train_dfBoston <- dfBoston[Boston_trainIndex, ]
-valid_dfBoston <- dfBoston[Boston_validIndex, ]
+train_dfBoston <- dfBoston[trainIndex_Boston, ]
+valid_dfBoston <- dfBoston[validIndex_Boston, ]
 
 
 
 # b) Fit a multiple linear regression model to the median house price (MEDV) as a function of CRIM, CHAS, RM and DIS. (0.5 mark) Which predictors are significant? (0.5 mark)
 
+model <- lm(MEDV ~ CRIM+CHAS+RM+DIS, data = train_dfBoston)
+summary(model)
+
+#significant predictors include CRIM, CHAS and RM
 
 
 
 # c) Find the best model of the above model using the “backward” method. (0.5 mark) Write the equation of the best model. (0.5 mark)  output variable = intercept + coeff 1 X1, coeff 2 X2…)
 
+model_step <- step(model,direction = "backward")
+summary(model_step)
+
+#MEDV = -26.50 + -0.23 CRIM + 5.10 CHAS + 7.85 RM 
 
 
 
 #d) Use correlation matrix to discuss the relationships among INDUS, NOX and TAX. (0.5 mark) 1 bonus mark if you can use one of the heatmaps we learned in class.
 
+cormat_Boston <- round(cor(train_dfBoston),2)
+cormat_Boston
+
+melted_cormat_Boston <- melt(cormat_Boston)
+head(melted_cormat_Boston)
+
+ggheatmap <- ggplot(data = melted_cormat_Boston,aes(x = Var1, y = Var2, fill = value )) + 
+  geom_tile(color = "white") + 
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0, limit = c(-1,1), space = "Lab", name="Pearson\nCorrelation") + 
+  theme_minimal()
+
+
+ggheatmap + 
+  geom_text(aes(Var1,Var2, label = value), color = "black", size = 2) +
+  theme(legend.direction = "horizontal")+
+  guides(fill = guide_colorbar(barwidth = 7, barheight = 1,title.position = "top", title.hjust = 0.5))
 
 
 
 
 #e) Fit a logistic regression model to the categorized median house price (CAT.MEDV) as a function of CRIM, CHAS, RM and DIS. (0.5 mark) Which predictors are significant? (0.5 mark)
 
+model2 <- glm(CAT..MEDV ~ CRIM+CHAS+RM+DIS, data = train_dfBoston, family = "binomial")
+options(scipen=999)
+summary(model2)
+
+#RM is the only significant predictor.
+
 
 
 #f) List 3 differences between multiple linear regression and logistic regression. (1.5 marks)
 
+#f-1) Output for multiple linear regression is numeric, while for logistic regression it is categorical
+#f-2) Parameter estimation for multiple linear regression is least squares, while for logistic regression it is maximum likelihood
+#f-3) Performance measures for multiple linear regression include lift charts and accuracy test, while for logistic regression it is a confusion matrix.
 
 
 #==========================================
