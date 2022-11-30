@@ -147,25 +147,24 @@ model_nn$results
 
 # b) What is the best k? (0.5 mark)
 
-accuracy_dfBoston <-data.frame(k = seq(1,4,1),RMSE = rep(0,4))
+accuracy_dfBoston <-data.frame(k = seq(1,5,1),RMSE = rep(0,5))
 accuracy_dfBoston
 # compute knn for different k on validation.
 
-for(i in 1:4) {
+for(i in 1:5) {
   knn.pred <- class::knn(train = train.norm.df[, 1:12], test = valid.norm.df[, 1:12],
                  cl = train.norm.df[, 13], k = i)
-  accuracy_dfBoston[i, 2] <-RMSE(numeric(knn.pred),numeric(valid.norm.df$MEDV))
+  accuracy_dfBoston[i, 2] <-caret::RMSE(as.numeric(as.character(knn.pred)),as.numeric(as.character(valid.norm.df$MEDV)))
 }
 
 accuracy_dfBoston
-#K=4, because when K = 4 it has the least RMSE across the 5 K's
+#K=2, because when K = 2 it has the least RMSE across the 5 K's which is 4.58 RMSE. 
+# The 2 solutions would differ in RMSE but it gives out K=2 has the lowest RMSE.
 
 
 # c) What does the best k mean (i.e. how many nearest neighbors shall be used to determine the predicted value of MEDV, and how is the value determined)? (0.5 mark) 
-nn <- class::knn(train= train.norm.df[,1:12], test = valid.norm.df[,1:12] , cl = train.norm.df[,13],k=7)
-
+nn <- class::knn(train= train.norm.df[,1:12], test = valid.norm.df[,1:12] , cl = train.norm.df[,13],k=2)
 # The best K means how many nearest neighbor shall be used. In this case because its a numerical outcome the lowest error is used to give the best value of K.
-
 
 
 
