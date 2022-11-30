@@ -172,7 +172,7 @@ nn <- class::knn(train= train.norm.df[,1:12], test = valid.norm.df[,1:12] , cl =
 # QUESTION 3
 # Neural Nets (Total 3.5 marks)
 #==========================================
-install.packages("neuralnet")
+#install.packages("neuralnet")
 library(neuralnet)
 
 # 1)	A neural net typically starts out with random coefficients; hence, it produces essentially random predictions when presented with its first case. What is the key ingredient by which the net evolves to produce a more accurate prediction? (0.5 mark)
@@ -190,12 +190,22 @@ View(dfToyotaCorolla)
 unique(dfToyotaCorolla$Fuel_Type)
 dfToyotaCorolla$Fuel_Type = factor(dfToyotaCorolla$Fuel_Type,levels = c('Diesel', 'Petrol', 'CNG'),labels = c(0, 1, 2))
 
-
+dfToyotaCorolla.simp <-dfToyotaCorolla[,c('Age_08_04','KM','Fuel_Type','Price')]
+dfToyotaCorolla.simp
 #Scale the numerical predictor and outcome variables to a 0-1 scale. (0.5 mark) 
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
 
+scale0to1 <- as.data.frame(lapply(dfToyotaCorolla.simp[,c("Age_08_04","KM","Price")], normalize))
+scale0to1
 
+dfToyotaCorolla.fin <-cbind(scale0to1,Fuel_Type=as.numeric(dfToyotaCorolla.simp$Fuel_Type))
+finaldf<-as.data.frame(dfToyotaCorolla.fin)
+finaldf
 #Fit a neural network model to the data. Use a single hidden layer with 2 nodes. (0.5 mark) 
 
-n <- neuralnet(Price~ Age_08_04 + KM + Fuel_Type, data = dfToyotaCorolla, linear.output = F, hidden = 2)
+n <- neuralnet::neuralnet(Price ~ ., data = finaldf, linear.output = F, hidden = 2)
 
 #Plot the neural network. (0.5 mark)
+plot(n)
