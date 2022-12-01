@@ -193,6 +193,7 @@ dfToyotaCorolla$Fuel_Type = factor(dfToyotaCorolla$Fuel_Type,levels = c('Diesel'
 dfToyotaCorolla.simp <-dfToyotaCorolla[,c('Age_08_04','KM','Fuel_Type','Price')]
 dfToyotaCorolla.simp
 #Scale the numerical predictor and outcome variables to a 0-1 scale. (0.5 mark) 
+
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
@@ -205,7 +206,12 @@ finaldf<-as.data.frame(dfToyotaCorolla.fin)
 finaldf
 #Fit a neural network model to the data. Use a single hidden layer with 2 nodes. (0.5 mark) 
 
-n <- neuralnet::neuralnet(Price ~ ., data = finaldf, linear.output = F, hidden = 2)
-n$result.matrix
+nn <- neuralnet::neuralnet(Price ~ ., data = finaldf, linear.output = F, hidden = 2)
+nn$result.matrix
 #Plot the neural network. (0.5 mark)
-plot(n)
+plot(nn)
+
+#model validation
+
+results<-data.frame(actual = finaldf$Price, prediction = n$net.result)
+View(results)
