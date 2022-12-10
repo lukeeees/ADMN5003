@@ -97,19 +97,49 @@ library(gains)
 #==========================================
 
 # 1)	Prepare your data (1 mark):
+
+
+df <- read.csv("assign2data_Luke_Katrina.csv")
+
+head(df)
+
+median_danceability <- median(df$danceability, na.rm = TRUE)
+
+median_tempo <- median(df$tempo, na.rm = TRUE)
+
+df_clean <- df %>% replace_na(list(danceability = median_danceability,tempo = median_tempo))
+
 #a.	Transform a continuous variable into a categorical variable, or a categorical variable to continuous variable if necessary. Add an additional column for the transformed data.
+
+
 #b.	Normalize your predictor variables if necessary.
 #c.	Partition your data and use 60% training data for your analyses.
 #d.	Choose the appropriate columns for your analyses.
 
 
 
-#2)	Use two of the supervised-learning data mining methods (2 marks)
+
+
+
+
+
+#2)	Use two of the supervised-learning data mining methods (2 marks) - #logistic regression & naive Bayes Classifier
+
+
 #a)	One method to analyze continuous output variable. Do not choose multiple linear regression for this, as you have used it in Assignment 2.
+
+
+
 #b)	Another method to analyze categorical output variable. Note: Your output variable is continuous, therefore you need to transform it to categorical in Step 1).
+
+
 #c)	Use the two predictor variables: one continuous and one categorical. Transform the data type, if necessary, in Step 1).
+
 #d)	Plot the result if you use neural network.
+
 #e)	Briefly describe the relationships between the two predictor variables and the output variable. For example, write the equation for logistic regression, describe the meaning of the best k and the identify the corresponding neighbors for k-NN, plot the best network for neural network, etc.
+
+
 #f)	What are the similarities and differences in the results of the two analyses? (simple descriptions are needed here)
 
 
