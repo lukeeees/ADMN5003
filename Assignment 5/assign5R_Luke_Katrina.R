@@ -24,11 +24,32 @@ library(gains)
 # With the given pivot tables, compute probabilities for a) b) c) and d) by using the Naive Bayes method. Please provide detailed calculation such as (axb)x(cxd)x(exf) / [ (gxJ) + (kxt)] etc. (Total 2 marks, 0.5 mark each)
 #==========================================
 
-#a)	P(Delayed|Weather=Good, Destination=EWR) = 
-#b)	P(Delayed|Weather=Good, Destination=JFK) = 
-#c)	P(Delayed|Weather=Bad, Destination=EWR) = ?
-#d)	P(Delayed|Weather=Bad, Destination=JFK) = ?
+#a)	P(Delayed|Weather=Good, Destination=EWR)
+
+  #((P(Delayed)*P(W=Good|Delayed))/P(W=Good))* P(D=EWR)
+  
+  ((428/2202)*(396/428)/(2169/2202))*(1182/2202)
+
+
+#b)	P(Delayed|Weather=Good, Destination=JFK)
+
+  #((P(Delayed)*P(W=Good|Delayed))/P(W=Good))* P(D=JFK)
+  
+  ((428/2202)*(396/428)/(2169/2202))*(1020/2202)
+
+
+#c)	P(Delayed|Weather=Bad, Destination=EWR)
+
+  #((P(Delayed)*P(W=Bad|Delayed))/P(W=Bad))* P(D=EWR)
+
+  ((428/2202)*(32/428)/(33/2202))*(1182/2202)
+
+
+#d)	P(Delayed|Weather=Bad, Destination=JFK)
       
+  #((P(Delayed)*P(W=Bad|Delayed))/P(W=Bad))* P(D=JFK)
+
+  ((428/2202)*(32/428)/(33/2202))*(1020/2202)
 
 
 
