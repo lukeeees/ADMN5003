@@ -18,6 +18,7 @@ library(psych)
 library(caret)
 library(InformationValue)
 library(gains)
+library(e1071)
 
 #==========================================
 # QUESTION 1
@@ -102,6 +103,7 @@ library(gains)
 df <- read.csv("assign2data_Luke_Katrina.csv")
 
 head(df)
+View(df)
 
 median_danceability <- median(df$danceability, na.rm = TRUE)
 
@@ -109,11 +111,16 @@ median_tempo <- median(df$tempo, na.rm = TRUE)
 
 df_clean <- df %>% replace_na(list(danceability = median_danceability,tempo = median_tempo))
 
-#a.	Transform a continuous variable into a categorical variable, or a categorical variable to continuous variable if necessary. Add an additional column for the transformed data.
+View(df_clean)
 
-
+#a.	Transform a continuous variable into a categorical variable, or a categorical variable to continuous variable if necessary. Add an additional column for the transformed data. - not necessary
 #b.	Normalize your predictor variables if necessary.
+
+
+
 #c.	Partition your data and use 60% training data for your analyses.
+
+
 #d.	Choose the appropriate columns for your analyses.
 
 
