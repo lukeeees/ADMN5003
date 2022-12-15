@@ -19,7 +19,10 @@ library(caret)
 library(InformationValue)
 library(gains)
 library(e1071)
-
+#install.packages("arules")
+library(Matrix)
+library(arules)
+set.seed(0)
 #==========================================
 # QUESTION 1
 # With the given pivot tables, compute probabilities for a) b) c) and d) by using the Naive Bayes method. Please provide detailed calculation such as (axb)x(cxd)x(exf) / [ (gxJ) + (kxt)] etc. (Total 2 marks, 0.5 mark each)
@@ -30,7 +33,7 @@ library(e1071)
   #((P(Delayed)*P(W=Good|Delayed))/P(W=Good))* P(D=EWR)
   
   ((428/2202)*(396/428)/(2169/2202))*(1182/2202)
-
+    
 
 #b)	P(Delayed|Weather=Good, Destination=JFK)
 
@@ -60,14 +63,19 @@ library(e1071)
 # QUESTION 2
 # 2.	Association Rules. Question 14.2 (The Green Book, page 352). (Total 1 mark)
 #==========================================
+course.topics.df <- read.csv("Coursetopics.csv")
+head(course.topics.df)
 
+course.mat<-as.matrix(course.topics.df)
+course.mat
 
+course.trans<-as(course.mat,"Course")
 #Run association rules on the data, with supp= 0.01, conf = 0.5. (0.5 mark) 
-
+rules <- apriori(course.mat,parameter = list(sup = 0.01, conf = 0.5, target = "rules"))
+head(course.topics.df)
 
 #Interpret the top 3 association rules. Use the function inspect(sort(rules, by = "lift")) to sort resulting rules by lift. (0.5 mark)
-
-
+inspect(head(sort(rules,by="lift"),n=8))
 
 
 
@@ -76,17 +84,56 @@ library(e1071)
 # QUESTION 3
 # Using the dataset “Cereals.csv” to answer following questions on clustering. (4 marks)
 #==========================================
-
+Cereals <- read.csv("Cereals.csv")
+View(Cereals)
 
 # 1)	Remove all cereals with missing values. (0.5 mark) Normalize all predictor variables. (0.5 mark)
 
+# removing all cereals with missing values
+nrow(Cereals)
+Cereals[Cereals==0] <- NA
+Cereals <- na.omit(Cereals)
+View(Cereals)
+
+# Normalize all predictor values
+norm.values <- preProcess(Cereals, method=c("center", "scale"))
+cereals.df.norm <-predict(norm.values,Cereals)
+
+row.names(cereals.df.norm) <- row.names(Cereals) 
+
 # 2)	Apply hierarchical clustering to the data using Euclidean distance. (1 mark) Show the clustering results from complete linkage with 5 clusters. (0.5 mark)
+d.norm <- dist(cereals.df.norm[,4:15], method = "euclidean")
+d.norm
+
+hc1 <- hclust(d.norm, method = "single") #single means minimum distance
+plot(hc1, hang = -1, ann = FALSE)
+hc2 <- hclust(d.norm, method = "average")
+plot(hc2, hang = -1, ann = FALSE)
 
 # 3)	Use K-means clustering with 5 clusters. (1 mark)
 
+View(cereals.df.norm)
+kcereals <- kmeans(cereals.df.norm[,4:15], 5)
+kcereals$cluster
+
+# plot an empty scatter plot
+plot(c(0), xaxt = 'n', ylab = "", type = "l", 
+     ylim = c(min(kcereals$centers), max(kcereals$centers)), xlim = c(0, 12))
+
+# label x-axes
+axis(1, at = c(1:12), labels = names(Cereals[,4:15]))
+
+# plot centroids
+for (i in c(1:5))
+  lines(kcereals$centers[i,], lty = i, lwd = 2, col = ifelse(i %in% c(1, 3, 5),
+                                                       "black", "dark grey"))
+
+# name clusters
+text(x = 0.5, y = kcereals$centers[, 1], labels = paste("Cluster", c(1:6)))
+
 # 4)	Compare the results from b and c. (Hint: exam cluster members, and compute mean for each cluster) Discuss your results.  (0.5 mark)
-
-
+# comparing the results of b and c we can see that the clustering for b is a paired distance while 
+# c it is clustered to its mean centroid.
 
 
 
@@ -134,7 +181,7 @@ df_clean$albumCode <- ifelse(df_clean$album == "Taylor Swift", 1, 0)
 
 View(df_clean)
 
-set.seed(0)
+
 
 trainIndex <- sample(row.names(df_clean), 0.6*dim(df_clean)[1])  
 validIndex <- setdiff(row.names(df_clean), trainIndex)  
@@ -213,7 +260,7 @@ for(i in 1:5) {
 
 accuracy_df 
 
-
+train_df
 #Check for overfitting
 knn.pred.train <- class::knn(train= train_df[,c("tempo","albumCode")], test = train_df[,c("tempo","albumCode")] , cl = train_df[,"danceability"], k = 3)
 
@@ -227,7 +274,8 @@ caret::RMSE(as.numeric(as.character(knn.pred.train)),as.numeric(as.character(tra
 
 
 #lift chart
-
+lift.knn <- lift(relevel(as.factor(danceability_logitpred), ref="Yes") ~ probDance, data = train_df)
+xyplot(lift.knn, plot = "gain")
 
 
 
