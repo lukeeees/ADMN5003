@@ -69,13 +69,12 @@ head(course.topics.df)
 course.mat<-as.matrix(course.topics.df)
 course.mat
 
-course.trans<-as(course.mat,"Course")
 #Run association rules on the data, with supp= 0.01, conf = 0.5. (0.5 mark) 
 rules <- apriori(course.mat,parameter = list(sup = 0.01, conf = 0.5, target = "rules"))
 head(course.topics.df)
 
 #Interpret the top 3 association rules. Use the function inspect(sort(rules, by = "lift")) to sort resulting rules by lift. (0.5 mark)
-inspect(head(sort(rules,by="lift"),n=8))
+inspect(head(sort(rules,by="lift"),n=3))
 
 
 # the LHS are the frequent set of items which is the antecedent which in this case
@@ -215,7 +214,7 @@ valid_df$danceability_logitpred <-ifelse(valid_df$probDance >0.5,"Yes","No")
 #Equation for Logistic Regression
 summary(logit)
 
-logit_equation = 6.93159+(-0.04321*tempo)+(-0.70058*albumCode)
+#logit_equation = 6.93159+(-0.04321*tempo)+(-0.70058*albumCode)
 
 
 
