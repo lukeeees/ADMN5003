@@ -78,7 +78,12 @@ head(course.topics.df)
 inspect(head(sort(rules,by="lift"),n=8))
 
 
+# the LHS are the frequent set of items which is the antecedent which in this case
+# 1. Intro, Regression, Forecast
+# 2. Intro, Survey, DOE
+# 3. Intro, DataMining, Cat. Data
 
+# the Rhs are the consequent which couses they'll likely take after getting the antecedents.
 
 #==========================================
 # QUESTION 3
@@ -120,8 +125,6 @@ kcereals$cluster
 plot(c(0), xaxt = 'n', ylab = "", type = "l", 
      ylim = c(min(kcereals$centers), max(kcereals$centers)), xlim = c(0, 12))
 
-# label x-axes
-axis(1, at = c(1:12), labels = names(Cereals[,4:15]))
 
 # plot centroids
 for (i in c(1:5))
